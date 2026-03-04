@@ -10,6 +10,7 @@ import com.notes.app.model.Tag;
 import com.notes.app.model.Note;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,12 +24,12 @@ public class NoteService {
     }
 
     //создание заметки с id
-    public Note createNote(String title, String content, Long userId, Tag tag) {
+    public Note createNote(String title, String content) {
     
         Note note = new Note();
         note.setTitle(title);
         note.setContent(content);
-        note.setTag(tag);
+        //note.setTag(tag);
         note.setCreatedAt(LocalDateTime.now());
         note.setUpdatedAt(LocalDateTime.now());
     
@@ -48,9 +49,7 @@ public class NoteService {
     }
     
     // Получение заметки по id
-    public Note getNoteById(Long id) {
-        
-        return noteRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Note not found"));
+    public Optional<Note> getNoteById(Long id) {
+        return noteRepository.findById(id);
     }
 }

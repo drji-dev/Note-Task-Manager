@@ -7,5 +7,5 @@ public class NoteRequest {
     
     private String title;
     private String content;
-    private Long tagId;
+    private String tag;
 }

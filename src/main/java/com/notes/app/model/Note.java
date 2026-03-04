@@ -24,6 +24,6 @@ public class Note {
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "Tag_id")
+    @JoinColumn(name = "tag_id")
     private Tag tag;
 }
