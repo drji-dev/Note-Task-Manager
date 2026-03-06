@@ -3,6 +3,7 @@ package com.notes.app.service;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import com.notes.app.model.Tag;
+import com.notes.app.repository.NoteRepository;
 import com.notes.app.repository.TagRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 public class TagService {
     
     private final TagRepository tagRepository;
+
+    private final NoteRepository noteRepository;
 
     public void deleteTag(Long id) {
         tagRepository.deleteById(id);
@@ -50,4 +53,7 @@ public class TagService {
                 .orElseGet(() -> createTag(tagName, "#3B82F6"));
     }
 
+    public long getNoteCount(Long tagId) {
+        return noteRepository.countByTagId(tagId);
+    }
 }

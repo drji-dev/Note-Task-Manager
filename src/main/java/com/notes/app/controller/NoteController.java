@@ -9,6 +9,7 @@ import com.notes.app.dto.response.NoteResponse;
 import com.notes.app.model.Note;
 import com.notes.app.service.NoteService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -24,13 +25,13 @@ public class NoteController {
     }
 
     @PostMapping
-    public ResponseEntity<NoteResponse> createNote(@RequestBody NoteRequest request) {
+    public ResponseEntity<NoteResponse> createNote(@Valid @RequestBody NoteRequest request) {
         Note note = noteService.createNote(request.getTitle(), request.getContent(), request.getTagName());
         return ResponseEntity.status(HttpStatus.CREATED).body(convertToResponse(note));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<NoteResponse> updateNoteById(@PathVariable Long id, @RequestBody NoteRequest request) {
+    public ResponseEntity<NoteResponse> updateNoteById(@PathVariable Long id, @Valid @RequestBody NoteRequest request) {
         Note updateNote = noteService.updateNote(id, request.getTitle(), request.getContent(), request.getTagName());
         
         if (updateNote != null) {

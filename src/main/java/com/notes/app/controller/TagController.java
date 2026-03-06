@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.*;
 import com.notes.app.dto.response.TagResponse;
 import com.notes.app.model.Tag;
 import com.notes.app.service.TagService;
+
+import jakarta.validation.Valid;
+
 import com.notes.app.dto.request.TagRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -22,13 +25,13 @@ public class TagController {
     }
 
     @PostMapping()
-    public ResponseEntity<TagResponse> createTag(@RequestBody TagRequest request) {
+    public ResponseEntity<TagResponse> createTag(@Valid @RequestBody TagRequest request) {
         Tag tag = tagService.createTag(request.getColor(), request.getTagName());
         return ResponseEntity.status(HttpStatus.CREATED).body(convertToResponse(tag));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TagResponse> updateTagByID(@PathVariable Long id, @RequestBody TagRequest request) {
+    public ResponseEntity<TagResponse> updateTagByID(@PathVariable Long id, @Valid @RequestBody TagRequest request) {
         Tag updateTag = tagService.updateTag(id, request.getColor(), request.getTagName());
         
         if (updateTag != null) {
@@ -49,6 +52,7 @@ public class TagController {
         response.setId(tag.getId());
         response.setColor(tag.getColor());
         response.setTagName(tag.getName());
+        response.setNoteCount(tagService.getNoteCount(tag.getId()));
 
         return response;
     }

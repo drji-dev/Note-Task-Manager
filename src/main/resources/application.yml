@@ -2,9 +2,9 @@ spring:
   application:
     name: Noteapp
   datasource:
-    url: jdbc:postgresql://localhost:5432/${DB_NAME}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://localhost:5432/noteapp
+    username: admin
+    password: admin
     driver-class-name: org.postgresql.Driver
   
   jpa:
