@@ -1,6 +1,6 @@
 # NoteApp — приложение для заметок
 
-Веб-приложение на Java Spring Boot и PostgreSQL для создания и организации заметок.
+REST API на Java Spring Boot и PostgreSQL для создания и организации заметок.
 
 **Автор:** cyxapuk
 
@@ -8,14 +8,12 @@
 
 ## Функции
 
-- Создание и редактирование заметок
-- Категории с выбором цвета
-- Избранное
-- Фильтрация заметок по категориям
-- Счётчик заметок в каждой категории
-- Регистрация и вход
-- Защита от редактирования чужих заметок
-- Masonry-сетка
+- Создание, редактирование и удаление заметок
+- Теги с выбором цвета (автоматически создаются при добавлении к заметке)
+- Подсчёт количества заметок для каждого тега
+- Валидация входящих данных
+- Docker-контейнеризация
+- Полностью открытое API (без авторизации)
 
 ---
 
@@ -25,15 +23,11 @@
 - Java 21
 - Spring Boot 4.0
 - Spring Data JPA
-- Spring MVC
+- Spring Validation
 - PostgreSQL 15
 - Hibernate
 - Maven
-
-**Фронтенд**
-- HTML5 / CSS3
-- Thymeleaf
-- JavaScript
+- Lombok
 
 **Инфраструктура**
 - Docker
@@ -46,7 +40,7 @@
 
 ### Требования
 - Java 21
-- Docker и Docker Compose
+- Docker и Docker Compose (опционально)
 
 ### Быстрый старт (через Docker)
 
@@ -54,92 +48,64 @@
 git clone https://github.com/cyxapuk/note-app
 cd note-app
 ./mvnw clean package -DskipTests
-docker-compose up
+docker-compose up --build
 ```
 Приложение будет доступно по адресу: http://localhost:8080
 
 ## Запуск без Docker
 
-```bash
-sudo -u postgres psql -c "CREATE DATABASE noteapp;"
-sudo -u postgres psql -c "CREATE USER your_username WITH PASSWORD 'your_password';"
-sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE noteapp TO your_password;"
-./mvnw spring-boot:run
+    Создайте базу данных PostgreSQL:
+
+```sql
+CREATE DATABASE noteapp;
 ```
-## В файле src/main/resources/application.yml нужно указать свои данные:
+    Настройте подключение в src/main/resources/application.yml:
+
 ```yaml
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/noteapp
+    url: jdbc:postgresql://localhost:5432/your_DBNAME
     username: your_username
     password: your_password
 ```
+    Запустите приложение:
 
-## По умолчанию используются:
+```bash
+./mvnw spring-boot:run
+```
+## Переменные окружения (для Docker)
 
-   - База: noteapp
-
-   - Пользователь: admin
-
-   - Пароль: admin
-
-## Основные эндпоинты
-
-### Заметки
-| Метод | URL | Описание |
-|-------|-----|----------|
-| GET | `/notes` | Все заметки |
-| GET | `/notes?categoryId={id}` | Заметки по категории |
-| POST | `/notes` | Создать заметку |
-| POST | `/notes/delete/{id}` | Удалить заметку |
-| POST | `/notes/update/{id}` | Обновить заметку |
-| POST | `/notes/favorite/toggle/{id}` | Переключить избранное |
-| GET | `/notes/edit/{id}` | Страница редактирования |
-
-### Категории
-| Метод | URL | Описание |
-|-------|-----|----------|
-| POST | `/categories/create` | Создать категорию |
-| POST | `/categories/delete/{id}` | Удалить категорию |
-
-### Авторизация
-| Метод | URL | Описание |
-|-------|-----|----------|
-| GET | `/auth/login` | Страница входа |
-| POST | `/auth/login` | Вход |
-| GET | `/auth/register` | Страница регистрации |
-| POST | `/auth/register` | Регистрация |
-| GET | `/auth/change-password` | Страница смены пароля |
-| POST | `/auth/change-password` | Смена пароля |
-| GET | `/auth/logout` | Выход |OST	/categories/delete/{id}	Удалить категорию
-
-```sql
-CREATE TABLE users (
-    id BIGSERIAL PRIMARY KEY,
-    username VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP
-);
-
-CREATE TABLE categories (
-    id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255),
-    color VARCHAR(50),
-    user_id BIGINT REFERENCES users(id)
-);
-
-CREATE TABLE notes (
-    id BIGSERIAL PRIMARY KEY,
-    title VARCHAR(255),
-    content TEXT,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    favorite BOOLEAN DEFAULT FALSE,
-    user_id BIGINT REFERENCES users(id),
-    category_id BIGINT REFERENCES categories(id)
-);
+Создайте файл .env в корне проекта:
+```env
+DB_NAME=your_DBNAME
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
 ```
 
-## Лицензия
+### REST API эндпоинты
+## Теги
+| Метод | URL | Описание |
+|-------|-----|----------|
+| GET | `/api/tags/{id}` | Получить тег по ID |
+| POST | `/api/tags` | Создать тег |
+| PUT | `/api/tags/{id}` | Обновить тег |
+| DELETE | `/api/tags/{id}` | Удалить тег |
 
-MIT
+## Заметки
+| Метод | URL | Описание |
+|-------|-----|----------|
+| GET | `/api/notes/{id}` | Получить заметку по ID |
+| POST | `/api/notes` | Создать заметку |
+| PUT | `/api/notes/{id}` | Обновить заметку |
+| DELETE | `/api/notes/{id}` | Удалить заметку |
+
+## Примеры запросов
+
+# Создать тег
+```bash
+curl -X POST http://localhost:8080/api/tags -H "Content-Type: application/json" -d '{"name":"your_name","color":"your_color"}'
+```
+# Создать заметку
+```bash
+curl -X POST http://localhost:8080/api/notes -H "Content-Type: application/json" -d '{"title":"your_title","content":"your_content","tagName":"your_tagName"}'
+```
