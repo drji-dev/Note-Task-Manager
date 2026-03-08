@@ -1,5 +1,7 @@
 package com.notes.app.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,15 @@ public class NoteController {
     @GetMapping("/{id}")
     public ResponseEntity<NoteResponse> getNoteById(@PathVariable Long id) {
         return noteService.getNoteById(id).map(note -> ResponseEntity.ok(convertToResponse(note))).orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<NoteResponse>> getAllNotesByTag(@RequestParam(required = false) String tag) {
+        if (tag != null) {
+            List<NoteResponse> responses = noteService.getAllNotesByTagName(tag).stream().map(this::convertToResponse).toList();
+            return ResponseEntity.ok(responses);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping
