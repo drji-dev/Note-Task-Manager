@@ -12,8 +12,11 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String name;
 
     private String color;
+
+    @Column(name = "user_id")
+    private Long userId;
 }

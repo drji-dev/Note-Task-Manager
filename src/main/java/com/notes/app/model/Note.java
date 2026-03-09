@@ -16,7 +16,7 @@ public class Note {
     @Column(nullable = false)
     private String title;
     
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "created_at")
@@ -28,4 +28,7 @@ public class Note {
     @ManyToOne
     @JoinColumn(name = "tag_id")
     private Tag tag;
+
+    @Column(name = "user_id")
+    private Long userId;
 }

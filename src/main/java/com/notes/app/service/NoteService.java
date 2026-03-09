@@ -20,45 +20,46 @@ public class NoteService {
     private final TagService tagService;
 
     // Получение заметки по id
-    public Optional<Note> getNoteById(Long id) {
-        return noteRepository.findById(id);
+    public Optional<Note> getNoteByIdAndUserId(Long id, Long userId) {
+        return noteRepository.findByIdAndUserId(id, userId);
     }
 
-    public List<Note> getAllNotes() {
-        return noteRepository.findAll();
+    public List<Note> getAllNotesByUserId(Long userId) {
+        return noteRepository.findByUserId(userId);
     }
 
     //создание заметки с id
-    public Note createNote(String title, String content, String tag) {
+    public Note createNoteByUserId(String title, String content, String tag, Long userId) {
         
         Note note = new Note();
         note.setTitle(title);
         note.setContent(content);
         note.setCreatedAt(LocalDateTime.now());
         note.setUpdatedAt(LocalDateTime.now());
-        note.setTag(tagService.findOrCreateTag(tag));
+        note.setTag(tagService.findOrCreateTagByUserId(tag, userId));
+        note.setUserId(userId);
         
         return noteRepository.save(note);
     }
 
     // Обновление заметки по id
-    public Note updateNote(Long noteId, String title, String content, String tagName ) {
-        Note note = noteRepository.findById(noteId).orElseThrow(() -> new RuntimeException("Note not found"));
+    public Note updateNoteByUserId(Long noteId, String title, String content, String tagName, Long userId) {
+        Note note = noteRepository.findByIdAndUserId(noteId, userId).orElseThrow(() -> new RuntimeException("Note not found"));
         
         note.setTitle(title);
         note.setContent(content);
         note.setUpdatedAt(LocalDateTime.now());
-        note.setTag(tagService.findOrCreateTag(tagName));
+        note.setTag(tagService.findOrCreateTagByUserId(tagName, userId));
         
         return noteRepository.save(note);
     }
 
-    public List<Note> getAllNotesByTagName(String tagName) {
-        return noteRepository.findByTagName(tagName);
+    public List<Note> getAllNotesByTagNameAndUserId(String tagName, Long userId) {
+        return noteRepository.findByTagNameAndUserId(tagName, userId);
     }
     
     // Удаление заметки по id
-    public void deleteNote(Long id) {
-        noteRepository.deleteById(id);
+    public void deleteNoteByUserId(Long id, Long userId) {
+        noteRepository.deleteByIdAndUserId(id, userId);
     }
 }

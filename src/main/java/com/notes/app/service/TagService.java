@@ -16,26 +16,27 @@ public class TagService {
 
     private final NoteRepository noteRepository;
 
-    public void deleteTag(Long id) {
-        tagRepository.deleteById(id);
+    public void deleteTagByIdAndUserId(Long id, Long userId) {
+        tagRepository.deleteByIdAndUserId(id, userId);
     }
 
-    public Optional<Tag> getTagById(Long id) {
-        return tagRepository.findById(id);
+    public Optional<Tag> getTagByIdAndUserId(Long id, Long userId) {
+        return tagRepository.findByIdAndUserId(id, userId);
     }
 
-    public Tag createTag(String name, String color) {
+    public Tag createTagByUserId(String name, String color, Long userId) {
 
         Tag tag = new Tag();
         tag.setColor(color);
         tag.setName(name);
+        tag.setUserId(userId);
 
         return tagRepository.save(tag);
     }
 
-    public Tag updateTag(Long tagId, String color, String name) {
+    public Tag updateTagByUserId(Long tagId, String color, String name, Long userId) {
 
-        Optional<Tag> optionalTag = tagRepository.findById(tagId);
+        Optional<Tag> optionalTag = tagRepository.findByIdAndUserId(tagId, userId);
 
         if (optionalTag.isPresent()) {
             Tag tag = optionalTag.get();
@@ -48,12 +49,12 @@ public class TagService {
         return null;
     }
 
-    public Tag findOrCreateTag(String tagName) {
-        return tagRepository.findByName(tagName)
-                .orElseGet(() -> createTag(tagName, "#3B82F6"));
+    public Tag findOrCreateTagByUserId(String tagName, Long userId) {
+        return tagRepository.findByNameAndUserId(tagName, userId)
+                .orElseGet(() -> createTagByUserId(tagName, "#3B82F6", userId));
     }
 
-    public long getNoteCount(Long tagId) {
-        return noteRepository.countByTagId(tagId);
+    public long getNoteCountByUserId(Long tagId, Long userId) {
+        return noteRepository.countByTagIdAndUserId(tagId, userId);
     }
 }

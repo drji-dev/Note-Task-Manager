@@ -22,28 +22,28 @@ public class NoteController {
     private final NoteService noteService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<NoteResponse> getNoteById(@PathVariable Long id) {
-        return noteService.getNoteById(id).map(note -> ResponseEntity.ok(convertToResponse(note))).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<NoteResponse> getNoteById(@PathVariable Long id, @RequestHeader("X-Telegram-Id") Long userId) {
+        return noteService.getNoteByIdAndUserId(id, userId).map(note -> ResponseEntity.ok(convertToResponse(note))).orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping
-    public ResponseEntity<List<NoteResponse>> getAllNotesByTag(@RequestParam(required = false) String tag) {
+    public ResponseEntity<List<NoteResponse>> getAllNotesByTag(@RequestParam(required = false) String tag, @RequestHeader("X-Telegram-Id") Long userId) {
         if (tag != null) {
-            List<NoteResponse> responses = noteService.getAllNotesByTagName(tag).stream().map(this::convertToResponse).toList();
+            List<NoteResponse> responses = noteService.getAllNotesByTagNameAndUserId(tag, userId).stream().map(this::convertToResponse).toList();
             return ResponseEntity.ok(responses);
         }
         return ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public ResponseEntity<NoteResponse> createNote(@Valid @RequestBody NoteRequest request) {
-        Note note = noteService.createNote(request.getTitle(), request.getContent(), request.getTagName());
+    public ResponseEntity<NoteResponse> createNote(@Valid @RequestBody NoteRequest request, @RequestHeader("X-Telegram-Id") Long userId) {
+        Note note = noteService.createNoteByUserId(request.getTitle(), request.getContent(), request.getTagName(), userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(convertToResponse(note));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<NoteResponse> updateNoteById(@PathVariable Long id, @Valid @RequestBody NoteRequest request) {
-        Note updateNote = noteService.updateNote(id, request.getTitle(), request.getContent(), request.getTagName());
+    public ResponseEntity<NoteResponse> updateNoteById(@PathVariable Long id, @Valid @RequestBody NoteRequest request, @RequestHeader("X-Telegram-Id") Long userId) {
+        Note updateNote = noteService.updateNoteByUserId(id, request.getTitle(), request.getContent(), request.getTagName(), userId);
         
         if (updateNote != null) {
             return ResponseEntity.ok(convertToResponse(updateNote));
@@ -52,8 +52,8 @@ public class NoteController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteNoteById(@PathVariable Long id) {
-        noteService.deleteNote(id);
+    public ResponseEntity<Void> deleteNoteById(@PathVariable Long id, @RequestHeader("X-Telegram-Id") Long userId) {
+        noteService.deleteNoteByUserId(id, userId);
         return ResponseEntity.noContent().build();
     } 
 
