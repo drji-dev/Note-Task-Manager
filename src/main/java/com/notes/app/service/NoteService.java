@@ -62,4 +62,18 @@ public class NoteService {
     public void deleteNoteByUserId(Long id, Long userId) {
         noteRepository.deleteByIdAndUserId(id, userId);
     }
+
+    public List<Note> getFavoriteNotes(Long userId) {
+        return noteRepository.findFavoriteNotesByUser(userId);
+    }
+
+    public Note toggleFavorite(Long id, Long userId) {
+        Optional<Note> optionalNote = noteRepository.findByIdAndUserId(id, userId);
+        if(optionalNote.isPresent()) {
+            Note note = optionalNote.get();
+            note.setIsFavorite(!note.getIsFavorite());
+            return noteRepository.save(note);
+        }
+        return null;
+    }
 }

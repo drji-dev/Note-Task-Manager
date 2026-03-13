@@ -20,18 +20,18 @@ public class TagController {
     private final TagService tagService;
     
     @GetMapping("/{id}")
-    public ResponseEntity<TagResponse> getTagById(@PathVariable Long id, @RequestHeader("X-Telegram-Id") Long userId) {
+    public ResponseEntity<TagResponse> getTagById(@PathVariable Long id, @RequestHeader("User-Id") Long userId) {
         return tagService.getTagByIdAndUserId(id, userId).map(tag -> ResponseEntity.ok(convertToResponse(tag, userId))).orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping()
-    public ResponseEntity<TagResponse> createTag(@Valid @RequestBody TagRequest request, @RequestHeader("X-Telegram-Id") Long userId) {
+    public ResponseEntity<TagResponse> createTag(@Valid @RequestBody TagRequest request, @RequestHeader("User-Id") Long userId) {
         Tag tag = tagService.createTagByUserId(request.getColor(), request.getTagName(), userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(convertToResponse(tag, userId));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TagResponse> updateTagById(@PathVariable Long id, @Valid @RequestBody TagRequest request, @RequestHeader("X-Telegram-Id") Long userId) {
+    public ResponseEntity<TagResponse> updateTagById(@PathVariable Long id, @Valid @RequestBody TagRequest request, @RequestHeader("User-Id") Long userId) {
 
         Tag updateTag = tagService.updateTagByUserId(id, request.getColor(), request.getTagName(), userId);
         
@@ -42,7 +42,7 @@ public class TagController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTagById(@PathVariable Long id, @RequestHeader("X-Telegram-Id") Long userId) {
+    public ResponseEntity<Void> deleteTagById(@PathVariable Long id, @RequestHeader("User-Id") Long userId) {
         tagService.deleteTagByIdAndUserId(id, userId);
         return ResponseEntity.noContent().build();
     }

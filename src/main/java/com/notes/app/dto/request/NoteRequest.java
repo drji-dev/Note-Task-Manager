@@ -11,5 +11,6 @@ public class NoteRequest {
 
     @NotBlank(message = "Поле не может быть пустым")
     private String content;
+
     private String tagName;
 }

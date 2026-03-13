@@ -12,4 +12,5 @@ public class NoteResponse {
     private LocalDateTime updatedAt;
     private LocalDateTime createdAt;
     private String tagName;
+    private Boolean isFavorite;
 }

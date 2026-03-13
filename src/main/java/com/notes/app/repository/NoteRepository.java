@@ -14,6 +14,9 @@ import com.notes.app.model.Note;
 public interface NoteRepository extends JpaRepository<Note, Long> {
 
     Optional<Note> findByIdAndUserId(Long id, Long userId);
+
+    @Query("SELECT n FROM Note n WHERE n.isFavorite = true AND n.userId = :userId")
+    List<Note> findFavoriteNotesByUser(Long userId);
     
     List<Note> findByUserId(Long userId);
     

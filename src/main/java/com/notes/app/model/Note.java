@@ -11,7 +11,7 @@ public class Note {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     
     @Column(nullable = false)
     private String title;
@@ -29,6 +29,9 @@ public class Note {
     @JoinColumn(name = "tag_id")
     private Tag tag;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private Long userId;
+
+    @Column(name = "is_favorite", nullable = false)
+    private Boolean isFavorite = false;
 }
