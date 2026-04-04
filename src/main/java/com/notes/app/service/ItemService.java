@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 import com.notes.app.dto.request.ItemRequest;
 import com.notes.app.model.Item;
+import com.notes.app.model.Tag;
 import com.notes.app.model.Item.ItemType;
 import com.notes.app.repository.ItemRepository;
 
@@ -17,6 +18,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ItemService {
     
     private final ItemRepository itemRepository;
@@ -34,11 +36,14 @@ public class ItemService {
     public Item createItemByUserId(ItemRequest request, Long userId) {
         
         Item item = new Item();
+        Tag tag = tagService.findTagByNameAndUserId(request.getTagName(), userId);
+
         item.setTitle(request.getTitle());
         item.setContent(request.getContent());
         item.setCreatedAt(LocalDateTime.now());
         item.setUpdatedAt(LocalDateTime.now());
-        item.setTag(tagService.findTagNameByUserId(request.getTagName(), userId));
+        item.setTagName(tag.getName());
+        item.setTagColor(tag.getColor());
         item.setUserId(userId);
 
         if (request.getType() != null && request.getType() == ItemType.TASK) {
@@ -53,11 +58,13 @@ public class ItemService {
 
     public Item updateItemByUserId(Long itemId, ItemRequest request, Long userId) {
         Item item = itemRepository.findByIdAndUserId(itemId, userId).orElseThrow(() -> new RuntimeException("Item not found"));
+        Tag tag = tagService.findTagByNameAndUserId(request.getTagName(), userId);
         
         item.setTitle(request.getTitle());
         item.setContent(request.getContent());
         item.setUpdatedAt(LocalDateTime.now());
-        item.setTag(tagService.findTagNameByUserId(request.getTagName(), userId));
+        item.setTagName(tag.getName());
+        item.setTagColor(tag.getColor());
 
         if (request.getType() != null && request.getType() == ItemType.TASK) {
             item.setType(ItemType.TASK);
@@ -77,7 +84,6 @@ public class ItemService {
         return itemRepository.findByTypeAndUserId(type, userId);
     }
 
-    @Transactional
     public void deleteItemByUserId(Long id, Long userId) {
         itemRepository.deleteByIdAndUserId(id, userId);
     }

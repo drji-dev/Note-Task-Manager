@@ -34,7 +34,7 @@ public class ItemController {
 
         if (tag != null) {
             responses = itemService.getAllItemByTagNameAndUserId(tag, userId).stream().map(this::convertToResponse).toList();
-        }else if (type != null && (type == ItemType.TASK) || (type == ItemType.NOTE)) {
+        }else if (type != null) {
             responses = itemService.getAllItemByTypeAndUserId(type, userId).stream().map(this::convertToResponse).toList();
         }else {
             responses = itemService.getAllItemsByUserId(userId).stream().map(this::convertToResponse).toList();
@@ -93,7 +93,7 @@ public class ItemController {
             response.setCreatedAt(item.getCreatedAt());
             response.setUpdatedAt(item.getUpdatedAt());
             response.setIsFavorite(item.getIsFavorite());
-            response.setTagName(item.getTag() != null ? item.getTag().getName() : null);
+            response.setTagName(item.getTagName() != null ? item.getTagName() : null);
             response.setType(item.getType());
             response.setPriority(item.getPriority());
 

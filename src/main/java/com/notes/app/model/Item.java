@@ -32,9 +32,9 @@ public class Item {
 
     private Priority priority;
 
-    @ManyToOne
-    @JoinColumn(name = "tag_id")
-    private Tag tag;
+    private String tagName;
+
+    private String tagColor;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;

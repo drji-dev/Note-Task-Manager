@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TagService {
     
     private final TagRepository tagRepository;
@@ -26,6 +27,10 @@ public class TagService {
     }
     
     public Tag createTagByUserId(TagRequest request, Long userId) {
+
+        if (tagRepository.findByNameAndUserId(request.getTagName(), userId).isPresent()) {
+            throw new RuntimeException("Тег с таким именем уже существует");
+        }
         
         Tag tag = new Tag();
         tag.setName(request.getTagName());
@@ -55,12 +60,11 @@ public class TagService {
         return null;
     }
     
-    @Transactional
     public void deleteTagByIdAndUserId(Long id, Long userId) {
         tagRepository.deleteByIdAndUserId(id, userId);
     }
 
-    public Tag findTagNameByUserId(String tagName, Long userId) {
+    public Tag findTagByNameAndUserId(String tagName, Long userId) {
         return tagRepository.findByNameAndUserId(tagName, userId).orElseThrow(() -> new RuntimeException("Tag not found"));
     }
 }
