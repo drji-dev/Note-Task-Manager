@@ -88,7 +88,7 @@ DB_PASSWORD=your_password
 
 ### REST API эндпоинты
 
-** Все запросы требуют User-Id: **
+## Все запросы требуют User-Id:
 
 ## Теги
 | Метод | URL | Описание |
@@ -111,14 +111,14 @@ DB_PASSWORD=your_password
 
 ## Примеры запросов
 
-# Создать тег
+Создать тег
 ```bash
 curl -X POST http://localhost:8080/api/tags -H "Content-Type: application/json" -H "User-Id: 1" -d '{"tagName":"your_tagName","color":"your_color"}' 
 ```
-# По умолчанию FFFFFF
+По умолчанию FFFFFF
 
-# Создать item
+Создать item
 ```bash
 curl -X POST http://localhost:8080/api/items -H "Content-Type: application/json" -H "User-Id: 1" -d '{"title":"your_title","content":"your_content","tagName":"your_tagName","type":"TASK/NOTE","priority":"LOW/MEDIUM/HIGH"}' 
 ```
-# Eсли type:NOTE priority игнорируется
+Eсли type:NOTE priority игнорируется
