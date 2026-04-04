@@ -1,6 +1,12 @@
-# NoteApp — приложение для заметок
+# Note&TaskManager — приложение для заметок
 
-REST API на Java Spring Boot и PostgreSQL для создания и организации заметок.
+![Java](https://img.shields.io/badge/Java-21-blue)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4-brightgreen)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue)
+![Docker](https://img.shields.io/badge/Docker-blue)
+![Maven](https://img.shields.io/badge/Maven-red)
+
+REST API на Java Spring Boot и PostgreSQL для создания и организации заметок и задач.
 
 **Автор:** cyxapuk
 
@@ -8,12 +14,10 @@ REST API на Java Spring Boot и PostgreSQL для создания и орга
 
 ## Функции
 
-- Создание, редактирование и удаление заметок
-- Теги с выбором цвета (автоматически создаются при добавлении к заметке)
-- Подсчёт количества заметок для каждого тега
-- Валидация входящих данных
+- Создание, редактирование и удаление заметок или задач
+- Теги с выбором цвета
 - Docker-контейнеризация
-- Полностью открытое API (без авторизации)
+- Полностью открытое API
 
 ---
 
@@ -45,8 +49,8 @@ REST API на Java Spring Boot и PostgreSQL для создания и орга
 ### Быстрый старт (через Docker)
 
 ```bash
-git clone https://github.com/cyxapuk/note-app
-cd note-app
+git clone https://github.com/drji-dev/Note-Task-Manager.git
+cd Note-Task-Manager
 ./mvnw clean package -DskipTests
 docker-compose up --build
 ```
@@ -83,6 +87,9 @@ DB_PASSWORD=your_password
 ```
 
 ### REST API эндпоинты
+
+** Все запросы требуют User-Id: **
+
 ## Теги
 | Метод | URL | Описание |
 |-------|-----|----------|
@@ -94,18 +101,24 @@ DB_PASSWORD=your_password
 ## Заметки
 | Метод | URL | Описание |
 |-------|-----|----------|
-| GET | `/api/notes/{id}` | Получить заметку по ID |
-| POST | `/api/notes` | Создать заметку |
-| PUT | `/api/notes/{id}` | Обновить заметку |
-| DELETE | `/api/notes/{id}` | Удалить заметку |
+| GET | `/api/items?tag=your_tagName` | Получить все заметки по TagName
+| GET | `/api/items?type=NOTE/TASK` | Получить все заметки по типу заметки
+| GET | `/api/items/favorites` | Получить фаворитные заметки
+| GET | `/api/items/{id}` | Получить item по ID |
+| POST | `/api/items` | Создать item |
+| PUT | `/api/items/{id}` | Обновить item |
+| DELETE | `/api/items/{id}` | Удалить item |
 
 ## Примеры запросов
 
 # Создать тег
 ```bash
-curl -X POST http://localhost:8080/api/tags -H "Content-Type: application/json" -d '{"name":"your_name","color":"your_color"}'
+curl -X POST http://localhost:8080/api/tags -H "Content-Type: application/json" -H "User-Id: 1" -d '{"tagName":"your_tagName","color":"your_color"}' 
 ```
-# Создать заметку
+# По умолчанию FFFFFF
+
+# Создать item
 ```bash
-curl -X POST http://localhost:8080/api/notes -H "Content-Type: application/json" -d '{"title":"your_title","content":"your_content","tagName":"your_tagName"}'
+curl -X POST http://localhost:8080/api/items -H "Content-Type: application/json" -H "User-Id: 1" -d '{"title":"your_title","content":"your_content","tagName":"your_tagName","type":"TASK/NOTE","priority":"LOW/MEDIUM/HIGH"}' 
 ```
+# Eсли type:NOTE priority игнорируется
